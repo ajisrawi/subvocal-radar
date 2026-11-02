@@ -289,5 +289,6 @@ if '--renders' in ARGS:
     sc.render.filepath = os.path.join(HERE, 'renders', 'board.png'); bpy.ops.render.render(write_still=True)
     lid_ob.hide_render = False; tray_ob.hide_render = False; move([lid_ob], dz=-26)
 
+bpy.ops.file.pack_all()   # textures inside the .blend, so it opens complete from the repo
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(HERE, 'subvocal-radar-enclosure.blend'))
 print('DONE')
