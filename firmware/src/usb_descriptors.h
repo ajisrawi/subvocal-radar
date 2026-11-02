@@ -1,0 +1,12 @@
+#pragma once
+#include <stdint.h>
+
+enum { ITF_NUM_CDC = 0, ITF_NUM_CDC_DATA, ITF_NUM_VENDOR, ITF_NUM_AUDIO_CONTROL, ITF_NUM_AUDIO_STREAMING, ITF_NUM_TOTAL };
+enum { VENDOR_REQUEST_WEBUSB = 1, VENDOR_REQUEST_MICROSOFT = 2 };
+
+// Audio entity IDs used by TUD_AUDIO_MIC_ONE_CH_DESCRIPTOR
+#define UAC2_ENTITY_INPUT_TERMINAL 0x01
+#define UAC2_ENTITY_FEATURE_UNIT   0x02
+#define UAC2_ENTITY_CLOCK          0x04
+
+extern uint8_t const desc_ms_os_20[];

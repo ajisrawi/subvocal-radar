@@ -1,0 +1,12 @@
+# build trees (outputs worth keeping are copied to release/ and dist/ folders, which ARE versioned)
+firmware/build/
+apps/windows/bin/
+apps/windows/obj/
+apps/decoder-test/bin/
+apps/decoder-test/obj/
+apps/android/.gradle/
+apps/android/app/build/
+apps/android/build/
+apps/android/local.properties
+hardware/jlcpcb/.gerber-tmp/
+*.log

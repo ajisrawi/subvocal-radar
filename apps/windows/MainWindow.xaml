@@ -1,0 +1,86 @@
+<Window x:Class="Subvocal.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Subvocal" Width="560" Height="640" MinWidth="460" MinHeight="520"
+        WindowStartupLocation="CenterScreen" Background="#F6F7F9" FontFamily="Segoe UI" FontSize="13">
+    <Window.Resources>
+        <Style TargetType="GroupBox">
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#DFE3E8"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+        </Style>
+    </Window.Resources>
+    <DockPanel Margin="14">
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+            <TextBlock Text="Subvocal" FontSize="20" FontWeight="SemiBold"/>
+            <TextBlock x:Name="HowTo" Foreground="#5D6673" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <Border DockPanel.Dock="Bottom" Background="White" BorderBrush="#DFE3E8" BorderThickness="1" CornerRadius="6" Padding="8" Margin="0,4,0,0">
+            <TextBlock x:Name="StatusText" TextWrapping="Wrap" Foreground="#14171C" Text="Ready."/>
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <GroupBox Header="Radar">
+                    <StackPanel>
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Content="Refresh" Click="RefreshDevices_Click" Margin="6,0,0,0"/>
+                            <ComboBox x:Name="DeviceBox" SelectionChanged="DeviceBox_Changed"/>
+                        </DockPanel>
+                        <TextBlock x:Name="DeviceState" Margin="0,6,0,0" Foreground="#5D6673" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Phrases">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,6">
+                            <Button DockPanel.Dock="Right" Content="Add" Click="AddPhrase_Click" Margin="6,0,0,0"/>
+                            <TextBox x:Name="NewPhrase" KeyDown="NewPhrase_KeyDown" ToolTip="Text to type, e.g. on my way"/>
+                        </DockPanel>
+                        <ListBox x:Name="PhraseList" Height="170" SelectionChanged="PhraseList_Changed"/>
+                        <WrapPanel Margin="0,8,0,0">
+                            <Button x:Name="RecordBtn" Content="Record take (2 s)" Click="Record_Click"/>
+                            <Button Content="Delete last take" Click="DeleteTake_Click"/>
+                            <Button Content="Delete phrase" Click="DeletePhrase_Click"/>
+                        </WrapPanel>
+                        <CheckBox x:Name="TrainMode" Margin="0,8,0,0" Checked="TrainMode_Changed" Unchecked="TrainMode_Changed"
+                                  Content="Training mode: holding the key records a take for the selected phrase"/>
+                        <TextBlock Margin="0,6,0,0" Foreground="#5D6673" TextWrapping="Wrap"
+                                   Text="Record each phrase 5 or more times, the way you will mouth it later (same distance, same pace). Mouth silently: the radar sees jaw and lip movement, not sound."/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Settings">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="130"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                        <TextBlock Text="Hold key" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="KeyBox" Grid.Column="1" Width="140" HorizontalAlignment="Left" SelectionChanged="KeyBox_Changed"/>
+                        <TextBlock Grid.Row="1" Text="Sensitivity" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <DockPanel Grid.Row="1" Grid.Column="1" Margin="0,8,0,0">
+                            <TextBlock x:Name="SensValue" DockPanel.Dock="Right" Width="36" TextAlignment="Right"/>
+                            <Slider x:Name="SensSlider" Minimum="1.2" Maximum="3.0" TickFrequency="0.1" IsSnapToTickEnabled="True" ValueChanged="Sens_Changed"
+                                    ToolTip="Higher accepts looser matches (fewer misses, more wrong words)"/>
+                        </DockPanel>
+                        <CheckBox x:Name="SpaceBox" Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" Content="Add a space after each phrase" Checked="Opt_Changed" Unchecked="Opt_Changed"/>
+                        <CheckBox x:Name="SoundBox" Grid.Row="3" Grid.Column="1" Margin="0,6,0,0" Content="Sound when listening starts" Checked="Opt_Changed" Unchecked="Opt_Changed"/>
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Header="Move phrases between devices">
+                    <WrapPanel>
+                        <Button Content="Export phrases..." Click="Export_Click"/>
+                        <Button Content="Import phrases..." Click="Import_Click"/>
+                        <TextBlock VerticalAlignment="Center" Foreground="#5D6673" Text="Same file works in the Android app."/>
+                    </WrapPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

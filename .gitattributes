@@ -1,0 +1,2 @@
+# keep files byte-for-byte (generated CAD/fab data, scripts with LF, binaries)
+* -text

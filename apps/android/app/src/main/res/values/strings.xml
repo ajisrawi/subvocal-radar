@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="insert_service_description">Lets Subvocal type the phrase you silently mouthed into the text field you are using. It reads only the focused text field, and only to insert text.</string>
+</resources>

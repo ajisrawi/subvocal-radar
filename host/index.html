@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subvocal Radar</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #14171c; --muted: #5d6673; --line: #dfe3e8;
+    --accent: #0b7a75; --accent-ink: #ffffff; --warn: #b4441c; --trace: #0b7a75; --trace2: #c2410c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0f1216; --panel: #171b21; --ink: #e8ebef; --muted: #98a2ae; --line: #2a3038;
+            --accent: #3fb8ae; --accent-ink: #0f1216; --warn: #f08a5d; --trace: #3fb8ae; --trace2: #f0a35d; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { padding: 18px 16px 6px; max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0; letter-spacing: .2px; }
+  header p { margin: 4px 0 0; color: var(--muted); }
+  main { max-width: 1100px; margin: 0 auto; padding: 8px 16px 40px; display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 900px) { main { grid-template-columns: 1.6fr 1fr; } .wide { grid-column: 1 / -1; } }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; min-width: 0; }
+  h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button, select, input[type=text] { font: inherit; border-radius: 7px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 7px 11px; }
+  button { cursor: pointer; }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+  button:disabled { opacity: .45; cursor: default; }
+  select { max-width: 100%; }
+  canvas { width: 100%; display: block; border-radius: 6px; background: var(--bg); }
+  .stat { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
+  .stat b { color: var(--ink); font-weight: 600; }
+  .note { color: var(--muted); font-size: 13px; margin: 8px 0 0; }
+  .warn { color: var(--warn); }
+  pre#log { margin: 8px 0 0; height: 150px; overflow: auto; background: var(--bg); border-radius: 6px; padding: 8px; font-size: 12px; white-space: pre-wrap; }
+  ul#takes { list-style: none; padding: 0; margin: 8px 0 0; max-height: 160px; overflow: auto; font-size: 13px; }
+  ul#takes li { display: flex; justify-content: space-between; border-bottom: 1px solid var(--line); padding: 4px 0; }
+  .grow { flex: 1 1 140px; min-width: 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Subvocal Radar</h1>
+  <p>60 GHz radar dongle: watch jaw and lip motion while you silently mouth words, and record labelled takes for training.</p>
+</header>
+<main>
+  <section>
+    <h2>Microphone input (PC, Android, iPhone)</h2>
+    <div class="row">
+      <button class="primary" id="micStart">Start</button>
+      <select id="micDev" class="grow"><option value="">Radar Microphone (choose after Start)</option></select>
+      <button id="micStop" disabled>Stop</button>
+    </div>
+    <p class="note">The dongle appears as a USB microphone named "Radar Microphone". Its sound is a 2 kHz carrier that holds the radar signal; this page decodes it.</p>
+    <canvas id="disp" height="220" aria-label="Displacement over time"></canvas>
+    <div class="row stat" style="margin-top:6px">
+      <span>displacement <b id="dmm">-</b> mm</span>
+      <span>signal <b id="lvl">-</b></span>
+      <span>rate <b id="srate">-</b></span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Phasor (I/Q)</h2>
+    <canvas id="iq" height="220" aria-label="I/Q phasor"></canvas>
+    <p class="note">A moving surface traces an arc; one full turn is 2.45 mm of motion at 61 GHz.</p>
+  </section>
+
+  <section class="wide">
+    <h2>Record takes</h2>
+    <div class="row">
+      <input type="text" id="label" class="grow" placeholder="label, e.g. hello" aria-label="Label">
+      <button class="primary" id="rec" disabled>Record 2 s</button>
+      <button id="dl" disabled>Download dataset (JSON)</button>
+    </div>
+    <ul id="takes"></ul>
+    <p class="note">Each take stores the decoded I/Q at 200 samples per second with its label. Mouth the word silently while it records.</p>
+  </section>
+
+  <section class="wide">
+    <h2>WebUSB (Chrome or Edge on PC and Android)</h2>
+    <div class="row">
+      <button class="primary" id="usbConnect">Connect</button>
+      <select id="mode"><option value="profile">range profile</option><option value="raw">raw frames</option><option value="off">off</option></select>
+      <select id="preset"><option value="wide">wide sweep (3.5 cm bins)</option><option value="narrow">narrow sweep (Infineon)</option></select>
+      <select id="bin"><option value="auto">bin: auto</option></select>
+      <button id="rawRec" disabled>Record raw 10 s</button>
+    </div>
+    <canvas id="heat" height="200" aria-label="Range over time"></canvas>
+    <div class="row stat" style="margin-top:6px"><span>frames <b id="fps">-</b>/s</span><span>bin <b id="selbin">-</b></span><span id="usbState">not connected</span></div>
+    <div class="row" style="margin-top:8px">
+      <input type="text" id="cmd" class="grow" placeholder="console command, e.g. status" aria-label="Console command">
+      <button id="send" disabled>Send</button>
+    </div>
+    <pre id="log"></pre>
+  </section>
+</main>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const LAMBDA_MM = 299.792458 / 61.0;              // mm at 61 GHz
+const MM_PER_RAD = LAMBDA_MM / (4 * Math.PI);     // two-way path
+
+function fitCanvas(c) { const r = devicePixelRatio || 1; const w = c.clientWidth; c.width = w * r; c.height = c.getAttribute('height') * r; const g = c.getContext('2d'); g.setTransform(r, 0, 0, r, 0, 0); return g; }
+
+// ---------------------------------------------------------------- microphone path: 2 kHz carrier -> complex z
+const WORKLET = `
+class Demod extends AudioWorkletProcessor {
+  constructor() { super(); this.ph = 0; this.ai = 0; this.aq = 0; this.n = 0; this.li = 0; this.lq = 0; this.lj = 0; this.lk = 0; }
+  process(inputs) {
+    const x = inputs[0] && inputs[0][0]; if (!x) return true;
+    const fs = sampleRate, w = 2 * Math.PI * 2000 / fs, dec = Math.round(fs / 200), a = 1 - Math.exp(-2 * Math.PI * 150 / fs);
+    const out = [];
+    for (let k = 0; k < x.length; k++) {
+      const c = Math.cos(this.ph), s = Math.sin(this.ph); this.ph += w; if (this.ph > 2 * Math.PI) this.ph -= 2 * Math.PI;
+      // two cascaded one-pole low-passes at 150 Hz remove the 4 kHz mixing image
+      this.li += a * (2 * x[k] * c - this.li); this.lq += a * (-2 * x[k] * s - this.lq);
+      this.lj += a * (this.li - this.lj); this.lk += a * (this.lq - this.lk);
+      if (++this.n >= dec) { this.n = 0; out.push(this.lj, this.lk); }
+    }
+    if (out.length) this.port.postMessage(out);
+    return true;
+  }
+}
+registerProcessor('demod', Demod);`;
+
+let ctx, stream, node;
+const zI = [], zQ = [], dmm = [];   // 200 Hz history
+let lastPhase = null, unwrapped = 0, recording = null;
+const takes = [];
+
+async function listMics() {
+  const devs = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'audioinput');
+  const sel = $('micDev'); const cur = sel.value; sel.innerHTML = '';
+  for (const d of devs) { const o = document.createElement('option'); o.value = d.deviceId; o.textContent = d.label || 'microphone'; sel.appendChild(o); }
+  const radar = devs.find((d) => /radar/i.test(d.label));
+  sel.value = cur || (radar ? radar.deviceId : (devs[0] && devs[0].deviceId) || '');
+}
+
+async function micStart() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: $('micDev').value ? { exact: $('micDev').value } : undefined,
+      echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 } });
+    await listMics();
+    const want = $('micDev').value, have = stream.getAudioTracks()[0].getSettings().deviceId;
+    if (want && have && want !== have) { stream.getTracks().forEach((t) => t.stop()); return micStart(); }
+    ctx = new AudioContext();
+    await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([WORKLET], { type: 'text/javascript' })));
+    node = new AudioWorkletNode(ctx, 'demod');
+    ctx.createMediaStreamSource(stream).connect(node);
+    node.port.onmessage = (e) => onIQ(e.data);
+    $('srate').textContent = (ctx.sampleRate / 1000) + ' kHz';
+    $('micStart').disabled = true; $('micStop').disabled = false; $('rec').disabled = false;
+  } catch (err) { alert('Microphone: ' + err.message); }
+}
+function micStop() { stream && stream.getTracks().forEach((t) => t.stop()); ctx && ctx.close(); ctx = null; $('micStart').disabled = false; $('micStop').disabled = true; $('rec').disabled = true; }
+
+function onIQ(v) {
+  for (let k = 0; k < v.length; k += 2) {
+    const i = v[k], q = v[k + 1];
+    const ph = Math.atan2(q, i);
+    if (lastPhase !== null) { let d = ph - lastPhase; if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI; unwrapped += d; }
+    lastPhase = ph;
+    zI.push(i); zQ.push(q); dmm.push(unwrapped * MM_PER_RAD);
+    if (recording) { recording.i.push(+i.toFixed(5)); recording.q.push(+q.toFixed(5)); if (recording.i.length >= 400) finishTake(); }
+  }
+  const keep = 1200; if (zI.length > keep) { zI.splice(0, zI.length - keep); zQ.splice(0, zQ.length - keep); dmm.splice(0, dmm.length - keep); }
+}
+
+function drawMic() {
+  const g = fitCanvas($('disp')), W = $('disp').clientWidth, H = +$('disp').getAttribute('height');
+  g.clearRect(0, 0, W, H);
+  if (dmm.length > 2) {
+    // remove slow drift so the plot shows articulation, not posture
+    const n = dmm.length, mean = dmm.reduce((a, b) => a + b, 0) / n;
+    let span = 0.05; for (const v of dmm) span = Math.max(span, Math.abs(v - mean));
+    g.strokeStyle = css('--line'); g.beginPath(); g.moveTo(0, H / 2); g.lineTo(W, H / 2); g.stroke();
+    g.strokeStyle = css('--trace'); g.lineWidth = 1.6; g.beginPath();
+    for (let k = 0; k < n; k++) { const x = (k / 1200) * W, y = H / 2 - ((dmm[k] - mean) / span) * (H / 2 - 8); k ? g.lineTo(x, y) : g.moveTo(x, y); }
+    g.stroke();
+    $('dmm').textContent = (dmm[n - 1] - mean).toFixed(3);
+    $('lvl').textContent = Math.hypot(zI[n - 1], zQ[n - 1]).toExponential(1);
+  }
+  const c = $('iq'), h = fitCanvas(c), w2 = c.clientWidth, h2 = +c.getAttribute('height');
+  h.clearRect(0, 0, w2, h2);
+  const tail = 200, s = Math.max(1, zI.length - tail);
+  let r = 1e-9; for (let k = s; k < zI.length; k++) r = Math.max(r, Math.abs(zI[k]), Math.abs(zQ[k]));
+  const R = Math.min(w2, h2) / 2 - 10, cx = w2 / 2, cy = h2 / 2;
+  h.strokeStyle = css('--line'); h.beginPath(); h.arc(cx, cy, R, 0, 2 * Math.PI); h.moveTo(cx - R, cy); h.lineTo(cx + R, cy); h.moveTo(cx, cy - R); h.lineTo(cx, cy + R); h.stroke();
+  h.strokeStyle = css('--trace2'); h.lineWidth = 1.4; h.beginPath();
+  for (let k = s; k < zI.length; k++) { const x = cx + (zI[k] / r) * R, y = cy - (zQ[k] / r) * R; k > s ? h.lineTo(x, y) : h.moveTo(x, y); }
+  h.stroke();
+}
+
+function startTake() { const label = $('label').value.trim() || 'unlabelled'; recording = { label, i: [], q: [], rate: 200, t: new Date().toISOString() }; $('rec').disabled = true; $('rec').textContent = 'Recording...'; }
+function finishTake() {
+  takes.push(recording); const li = document.createElement('li');
+  li.innerHTML = `<span>${recording.label.replace(/</g, '&lt;')}</span><span class="stat">${recording.t.slice(11, 19)}</span>`;
+  $('takes').prepend(li); recording = null; $('rec').disabled = false; $('rec').textContent = 'Record 2 s'; $('dl').disabled = false;
+}
+function download(name, blob) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
+
+// ---------------------------------------------------------------- WebUSB path
+const VID = 0x1209, PID = 0x0001, ITF = 2, EP = 3;
+let dev = null, rxBuf = new Uint8Array(0), heatCols = [], frameCount = 0, rawChunks = null, rawUntil = 0;
+const log = (s) => { const el = $('log'); el.textContent += s; el.scrollTop = el.scrollHeight; };
+
+async function usbConnect() {
+  if (!navigator.usb) { alert('WebUSB needs Chrome or Edge (desktop or Android). Use the microphone panel on other browsers.'); return; }
+  try {
+    dev = await navigator.usb.requestDevice({ filters: [{ vendorId: VID, productId: PID }] });
+    await dev.open(); if (!dev.configuration) await dev.selectConfiguration(1);
+    await dev.claimInterface(ITF);
+    $('usbState').textContent = 'connected: ' + (dev.productName || 'radar');
+    $('send').disabled = false; $('rawRec').disabled = false;
+    await sendCmd('stream off'); await sendCmd('status'); await sendCmd('stream ' + $('mode').value);
+    readLoop();
+  } catch (err) { alert('WebUSB: ' + err.message); }
+}
+async function sendCmd(s) { if (!dev) return; await dev.transferOut(EP, new TextEncoder().encode(s + '\n')); }
+
+async function readLoop() {
+  while (dev && dev.opened) {
+    let r; try { r = await dev.transferIn(EP, 16384); } catch (e) { $('usbState').textContent = 'disconnected'; dev = null; return; }
+    if (!r.data || !r.data.byteLength) continue;
+    const chunk = new Uint8Array(r.data.buffer, r.data.byteOffset, r.data.byteLength);
+    if (rawChunks) { rawChunks.push(chunk.slice()); if (performance.now() > rawUntil) finishRaw(); }
+    const merged = new Uint8Array(rxBuf.length + chunk.length); merged.set(rxBuf); merged.set(chunk, rxBuf.length); rxBuf = merged;
+    parsePackets();
+  }
+}
+function parsePackets() {
+  for (;;) {
+    let p = -1;
+    for (let k = 0; k + 3 < rxBuf.length; k++) if (rxBuf[k] === 83 && rxBuf[k + 1] === 86 && rxBuf[k + 2] === 82 && rxBuf[k + 3] === 49) { p = k; break; }
+    if (p < 0) {
+      // console text (when not streaming) arrives as plain ASCII
+      if (rxBuf.length && rxBuf.every((b) => b === 9 || b === 10 || b === 13 || (b >= 32 && b < 127))) { log(new TextDecoder().decode(rxBuf)); rxBuf = new Uint8Array(0); }
+      else if (rxBuf.length > 3) rxBuf = rxBuf.slice(rxBuf.length - 3);
+      return;
+    }
+    if (p > 0) { const pre = rxBuf.slice(0, p); if (pre.every((b) => b === 10 || b === 13 || (b >= 32 && b < 127))) log(new TextDecoder().decode(pre)); rxBuf = rxBuf.slice(p); }
+    if (rxBuf.length < 16) return;
+    const dv = new DataView(rxBuf.buffer, rxBuf.byteOffset, rxBuf.length);
+    const type = rxBuf[4], bin = rxBuf[5], plen = dv.getUint16(12, true);
+    if (rxBuf.length < 16 + plen) return;
+    if (type === 2) onProfile(new DataView(rxBuf.buffer, rxBuf.byteOffset + 16, plen), bin);
+    frameCount++; $('selbin').textContent = bin;
+    rxBuf = rxBuf.slice(16 + plen);
+  }
+}
+function onProfile(dv, bin) {
+  const col = new Float32Array(16);
+  for (let b = 0; b < 16; b++) { let e = 0; for (let r = 0; r < 3; r++) { const o = ((r * 16 + b) * 2) * 2; const i = dv.getInt16(o, true), q = dv.getInt16(o + 2, true); e += i * i + q * q; } col[b] = Math.log10(1 + e); }
+  heatCols.push({ col, bin }); if (heatCols.length > 600) heatCols.shift();
+}
+function drawHeat() {
+  const c = $('heat'), g = fitCanvas(c), W = c.clientWidth, H = +c.getAttribute('height');
+  g.clearRect(0, 0, W, H); if (!heatCols.length) return;
+  let mx = 1e-9, mn = 1e9; for (const { col } of heatCols) for (const v of col) { mx = Math.max(mx, v); mn = Math.min(mn, v); }
+  const cw = W / 600, rh = H / 16, acc = css('--accent');
+  heatCols.forEach(({ col, bin }, x) => {
+    for (let b = 0; b < 16; b++) { g.globalAlpha = Math.max(0.04, (col[b] - mn) / (mx - mn || 1)); g.fillStyle = acc; g.fillRect(x * cw, H - (b + 1) * rh, cw + 0.6, rh); }
+    g.globalAlpha = 1; g.fillStyle = css('--trace2'); g.fillRect(x * cw, H - (bin + 0.5) * rh - 1, cw + 0.6, 2);
+  });
+}
+function finishRaw() {
+  const total = rawChunks.reduce((a, c) => a + c.length, 0), out = new Uint8Array(total); let o = 0; for (const c of rawChunks) { out.set(c, o); o += c.length; }
+  rawChunks = null; $('rawRec').textContent = 'Record raw 10 s';
+  download(`radar-raw-${Date.now()}.svr`, new Blob([out]));
+  log(`saved ${total} bytes (SVR1 packets, see firmware/src/app.h for the format)\n`);
+}
+
+setInterval(() => { $('fps').textContent = frameCount; frameCount = 0; }, 1000);
+(function loop() { drawMic(); drawHeat(); requestAnimationFrame(loop); })();
+for (let b = 0; b < 16; b++) { const o = document.createElement('option'); o.value = b; o.textContent = 'bin ' + b; $('bin').appendChild(o); }
+
+$('micStart').onclick = micStart; $('micStop').onclick = micStop;
+$('micDev').onchange = () => { if (ctx) { micStop(); micStart(); } };
+$('rec').onclick = startTake;
+$('dl').onclick = () => download(`subvocal-takes-${Date.now()}.json`, new Blob([JSON.stringify({ format: 'subvocal-radar/iq-200hz', mm_per_rad: MM_PER_RAD, takes })], { type: 'application/json' }));
+$('usbConnect').onclick = usbConnect;
+$('mode').onchange = () => sendCmd('stream ' + $('mode').value);
+$('preset').onchange = () => sendCmd('preset ' + $('preset').value);
+$('bin').onchange = () => sendCmd('bin ' + $('bin').value);
+$('rawRec').onclick = async () => { $('mode').value = 'raw'; await sendCmd('stream raw'); rawChunks = []; rawUntil = performance.now() + 10000; $('rawRec').textContent = 'Recording...'; };
+$('send').onclick = () => { const s = $('cmd').value.trim(); if (s) { sendCmd(s); log('> ' + s + '\n'); $('cmd').value = ''; } };
+$('cmd').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('send').click(); });
+if (navigator.mediaDevices) navigator.mediaDevices.addEventListener('devicechange', listMics);
+</script>
+</body>
+</html>
