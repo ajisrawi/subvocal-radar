@@ -6,9 +6,10 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync, rmSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
+import { homedir } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const OPENPCB = process.env.OPENPCB_DIR ?? 'C:/Users/ahmad/Documents/PCB Router 2022';
+const OPENPCB = process.env.OPENPCB_DIR ?? join(homedir(), 'Documents', 'PCB Router 2022');   // openpcb checkout (github.com/ajisrawi/openpcb)
 const CLI = `${OPENPCB}/packages/cli/dist/cli/src/openpcb.js`;
 const KICAD = process.env.KICAD_FOOTPRINTS ?? 'C:/Program Files/KiCad/10.0/share/kicad/footprints';
 const HW = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -91,6 +92,8 @@ op('rules', BOARD, '--width', 0.15, '--clearance', 0.1, '--via', 0.45, '--drill'
 const eco = op('sch-to-board', SCH, BOARD);
 log('sch-to-board', { added: eco.added?.length, placeholders: eco.placeholders, missingPins: eco.missingPins });
 if (eco.placeholders?.length || eco.missingPins?.length) throw new Error('footprint mismatch between schematic and board');
+// openpcb stores the board link as an absolute path; keep it relative so the repo does not carry local paths
+{ const d = JSON.parse(readFileSync(SCH, 'utf8')); if (d.boardLink) { d.boardLink.project = 'subvocal-radar.openboard.json'; delete d.boardLink.lastSync; writeFileSync(SCH, JSON.stringify(d, null, 1)); } }
 
 // ---------------------------------------------------------------- 3. placement
 // Fixed parts (locked): radar at the top, MCU in the middle, plug at the bottom edge.

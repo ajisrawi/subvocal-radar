@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Subvocal Radar icon">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12A594"/>
+      <stop offset="1" stop-color="#0B6E69"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#g)"/>
+  <!-- speech bubble -->
+  <path d="M30 30h68a10 10 0 0 1 10 10v38a10 10 0 0 1-10 10H58l-16 14v-14H30a10 10 0 0 1-10-10V40a10 10 0 0 1 10-10z"
+        fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
+  <!-- radar source + waves -->
+  <circle cx="40" cy="59" r="6" fill="#fff"/>
+  <path d="M52 47a17 17 0 0 1 0 24" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  <path d="M63 39a29 29 0 0 1 0 40" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".8"/>
+  <path d="M75 31a41 41 0 0 1 0 56" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".55"/>
+</svg>

@@ -60,7 +60,7 @@ The bottom side has test pads: **TP1 SWCLK, TP2 SWDIO, TP3 RUN, TP4 GND**.
 
 ## 6. Building the firmware yourself
 
-Windows, with the tools the build script expects in `C:\Users\ahmad\pico-tools` (Arm GNU toolchain 14.2, Pico SDK 2.3.1, picotool 2.3.1; CMake and Ninja on PATH):
+Windows, with the tools the build script expects in `%USERPROFILE%\pico-tools` (Arm GNU toolchain 14.2, Pico SDK 2.3.1, picotool 2.3.1; CMake and Ninja on PATH):
 
 ```powershell
 cd firmware

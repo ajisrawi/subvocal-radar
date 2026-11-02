@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" role="img" aria-label="How it works: mouth a phrase silently, the 60 GHz radar reads skin motion, the dongle sends it over USB-C, the app matches your trained phrases and types the text.">
+  <defs>
+    <linearGradient id="t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#12A594"/><stop offset="1" stop-color="#0B6E69"/></linearGradient>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0B7A75"/></marker>
+    <style>
+      .h { font: 700 17px 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif; fill: #14171C; }
+      .s { font: 13.5px 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif; fill: #5D6673; }
+      .n { font: 700 13px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #fff; }
+      .card { fill: #fff; stroke: #DFE3E8; stroke-width: 1.5; }
+      .ln { fill: none; stroke: #0B7A75; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+  <rect width="960" height="300" rx="18" fill="#F4F6F8"/>
+
+  <!-- 1 mouth -->
+  <g transform="translate(24 34)">
+    <rect class="card" width="168" height="232" rx="14"/>
+    <circle cx="22" cy="22" r="13" fill="url(#t)"/><text class="n" x="22" y="27" text-anchor="middle">1</text>
+    <g transform="translate(44 44)">
+      <path class="ln" d="M40 6c-20 0-34 14-34 34 0 14 6 24 14 30v16h30l6-12h10V56l8-4-8-14C64 18 56 6 40 6z"/>
+      <path class="ln" d="M52 62h10" stroke-width="2.5"/>
+      <path d="M58 70q6 4 10 0" class="ln" stroke-width="2.5"/>
+    </g>
+    <text class="h" x="84" y="168" text-anchor="middle">Mouth it</text>
+    <text class="s" x="84" y="190" text-anchor="middle">silently, no sound</text>
+    <text class="s" x="84" y="208" text-anchor="middle">jaw + lips move</text>
+  </g>
+
+  <!-- 2 radar -->
+  <g transform="translate(212 34)">
+    <rect class="card" width="168" height="232" rx="14"/>
+    <circle cx="22" cy="22" r="13" fill="url(#t)"/><text class="n" x="22" y="27" text-anchor="middle">2</text>
+    <g transform="translate(50 48)">
+      <rect x="0" y="22" width="34" height="44" rx="6" fill="url(#t)"/>
+      <circle cx="17" cy="44" r="5" fill="#fff"/>
+      <path class="ln" d="M46 30a20 20 0 0 1 0 28"/>
+      <path class="ln" d="M56 20a34 34 0 0 1 0 48" opacity=".75"/>
+      <path class="ln" d="M66 10a48 48 0 0 1 0 68" opacity=".5"/>
+    </g>
+    <text class="h" x="84" y="168" text-anchor="middle">60 GHz radar</text>
+    <text class="s" x="84" y="190" text-anchor="middle">measures skin motion</text>
+    <text class="s" x="84" y="208" text-anchor="middle">to micrometres, 200×/s</text>
+  </g>
+
+  <!-- 3 usb -->
+  <g transform="translate(400 34)">
+    <rect class="card" width="168" height="232" rx="14"/>
+    <circle cx="22" cy="22" r="13" fill="url(#t)"/><text class="n" x="22" y="27" text-anchor="middle">3</text>
+    <g transform="translate(44 50)">
+      <rect x="18" y="0" width="44" height="58" rx="8" fill="none" stroke="#0B7A75" stroke-width="3"/>
+      <rect x="29" y="58" width="22" height="22" rx="4" fill="url(#t)"/>
+      <path class="ln" d="M30 18h20M30 30h20M30 42h12" stroke-width="2.5"/>
+    </g>
+    <text class="h" x="84" y="168" text-anchor="middle">USB-C dongle</text>
+    <text class="s" x="84" y="190" text-anchor="middle">shows up as a mic:</text>
+    <text class="s" x="84" y="208" text-anchor="middle">PC, Android, iPhone</text>
+  </g>
+
+  <!-- 4 match -->
+  <g transform="translate(588 34)">
+    <rect class="card" width="168" height="232" rx="14"/>
+    <circle cx="22" cy="22" r="13" fill="url(#t)"/><text class="n" x="22" y="27" text-anchor="middle">4</text>
+    <g transform="translate(30 56)">
+      <path class="ln" d="M0 40c10 0 12-30 22-30s12 50 24 50 10-36 20-36 10 16 22 16 10-10 20-10"/>
+      <path d="M0 66c10 0 12-30 22-30s12 50 24 50 10-36 20-36 10 16 22 16 10-10 20-10" fill="none" stroke="#C2410C" stroke-width="2.5" stroke-dasharray="4 4" opacity=".7" transform="translate(0 -18)"/>
+    </g>
+    <text class="h" x="84" y="168" text-anchor="middle">Match</text>
+    <text class="s" x="84" y="190" text-anchor="middle">against phrases you</text>
+    <text class="s" x="84" y="208" text-anchor="middle">trained (5 takes each)</text>
+  </g>
+
+  <!-- 5 type -->
+  <g transform="translate(776 34)">
+    <rect class="card" width="160" height="232" rx="14"/>
+    <circle cx="22" cy="22" r="13" fill="url(#t)"/><text class="n" x="22" y="27" text-anchor="middle">5</text>
+    <g transform="translate(22 58)">
+      <rect x="0" y="0" width="116" height="40" rx="8" fill="none" stroke="#0B7A75" stroke-width="3"/>
+      <text x="12" y="26" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#14171C">on my way</text>
+      <path d="M96 9v22" stroke="#0B7A75" stroke-width="2.5"/>
+    </g>
+    <text class="h" x="80" y="168" text-anchor="middle">Typed</text>
+    <text class="s" x="80" y="190" text-anchor="middle">into the text field</text>
+    <text class="s" x="80" y="208" text-anchor="middle">you clicked, any app</text>
+  </g>
+
+  <!-- arrows -->
+  <path d="M194 150h16" stroke="#0B7A75" stroke-width="3" marker-end="url(#a)"/>
+  <path d="M382 150h16" stroke="#0B7A75" stroke-width="3" marker-end="url(#a)"/>
+  <path d="M570 150h16" stroke="#0B7A75" stroke-width="3" marker-end="url(#a)"/>
+  <path d="M758 150h16" stroke="#0B7A75" stroke-width="3" marker-end="url(#a)"/>
+</svg>

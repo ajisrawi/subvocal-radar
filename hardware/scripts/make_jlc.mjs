@@ -8,6 +8,7 @@ import { readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync } from 'nod
 import { execFileSync } from 'node:child_process';
 import zlib from 'node:zlib';
 import { join, dirname } from 'node:path';
+import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { PARTS, partFor, ROTATION_OFFSETS } from './jlc_parts.mjs';
 
@@ -47,7 +48,7 @@ writeFileSync(join(OUT, 'subvocal-radar-CPL-JLCPCB.csv'), cpl.join('\r\n') + '\r
 
 // ---- Gerbers: fresh export, bottom paste emptied (nothing is assembled on the bottom; its pads are bare test pads and
 // J1's optional hand-soldered bottom row), then zipped
-const OPENPCB = process.env.OPENPCB_DIR ?? 'C:/Users/ahmad/Documents/PCB Router 2022';
+const OPENPCB = process.env.OPENPCB_DIR ?? join(homedir(), 'Documents', 'PCB Router 2022');   // openpcb checkout (github.com/ajisrawi/openpcb)
 const gdir = join(OUT, '.gerber-tmp');
 rmSync(gdir, { recursive: true, force: true });
 execFileSync(process.execPath, [`${OPENPCB}/packages/cli/dist/cli/src/openpcb.js`, 'gerber', join(HW, 'subvocal-radar.openboard.json'), gdir, '--name', 'subvocal-radar'], { encoding: 'utf8' });

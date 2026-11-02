@@ -4,9 +4,10 @@
 import { writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { join, dirname } from 'node:path';
+import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
-const OPENPCB = process.env.OPENPCB_DIR ?? 'C:/Users/ahmad/Documents/PCB Router 2022';
+const OPENPCB = process.env.OPENPCB_DIR ?? join(homedir(), 'Documents', 'PCB Router 2022');   // openpcb checkout (github.com/ajisrawi/openpcb)
 const SCH = `${OPENPCB}/packages/cli/dist/schematic/src/`;
 const { newDesign, newPage } = await import(pathToFileURL(SCH + 'model.js'));
 const { basicLibrary } = await import(pathToFileURL(SCH + 'library.js'));

@@ -1,7 +1,7 @@
 # Builds the firmware on Windows and copies the .uf2 to firmware\release\.
-# Expects the tools in C:\Users\ahmad\pico-tools (override with -Tools): arm\bin (Arm GNU toolchain 14.2),
+# Expects the tools in %USERPROFILE%\pico-tools (override with -Tools): arm\bin (Arm GNU toolchain 14.2),
 # pico-sdk (Pico SDK 2.3.1 with lib\tinyusb), picotool\picotool (picotool 2.3.1). CMake and Ninja must be on PATH.
-param([string]$Tools = 'C:\Users\ahmad\pico-tools', [switch]$Clean)
+param([string]$Tools = (Join-Path $env:USERPROFILE 'pico-tools'), [switch]$Clean)
 # CMake prints status on stderr; Windows PowerShell would treat that as an error, so rely on exit codes instead
 $ErrorActionPreference = 'Continue'
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
