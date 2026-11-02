@@ -89,6 +89,19 @@ node hardware/scripts/make_board.mjs            # place, route (OpenRoute), DRC,
 node hardware/scripts/make_jlc.mjs              # JLCPCB order package
 ```
 
+## Enclosure
+
+<p align="center">
+  <img alt="Subvocal Radar in its 3D-printed case" src="hardware/enclosure/renders/hero-closed.png" width="49%">
+  <img alt="Exploded view: lid, board, tray" src="hardware/enclosure/renders/exploded.png" width="49%">
+</p>
+
+A two-part 3D-printable case, 22.6 × 49.8 × 7.4 mm: a tray that holds the board and a lid that slides over it. The lid's top is half a wavelength thick at 60 GHz (1.47 mm of PLA) with a half-wavelength air gap above the radar, so the plastic is close to invisible to the radar. STL files, print settings and the Blender scene: [hardware/enclosure/](hardware/enclosure/).
+
+## Video
+
+A 90-second overview with voiceover: [media/video/subvocal-radar.mp4](media/video/subvocal-radar.mp4). It is generated from code (`media/video/make_video.py`).
+
 ## Firmware
 
 RP2040 firmware on Pico SDK 2.3 and TinyUSB 0.18 ([`firmware/`](firmware/)). Core 1 reads radar frames (8 chirps × 64 samples × 3 receivers, 200 per second) and processes them; core 0 runs USB.
@@ -107,10 +120,12 @@ Build on Windows with `firmware\build.ps1`, or with CMake + Ninja anywhere ([doc
 hardware/        schematic, board, footprints, build scripts
   jlcpcb/        Gerbers, BOM (LCSC numbers), CPL, ORDER.md
   fab/           raw fab outputs, STEP model
+  enclosure/     3D-printable case (STL), Blender scene and renders
 firmware/        RP2040 firmware, release/subvocal_radar.uf2
 apps/            Subvocal for Windows and Android, decoder tests, dist/ builds
 host/            web viewer and recorder (single HTML file)
 docs/            firmware install guide, logo and images
+media/video/     90-second overview video and the code that generates it
 ```
 
 ## Status

@@ -10,3 +10,7 @@ apps/android/build/
 apps/android/local.properties
 hardware/jlcpcb/.gerber-tmp/
 *.log
+media/video/build/
+media/video/preview.mp4
+hardware/enclosure/build/
+*.blend1

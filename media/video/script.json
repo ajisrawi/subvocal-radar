@@ -1,0 +1,22 @@
+{
+  "voice": "en-US-AndrewNeural",
+  "rate": "+0%",
+  "scenes": [
+    { "id": "hook", "min": 7.0,
+      "vo": "What if you could talk to your computer, without making a single sound?" },
+    { "id": "problem", "min": 9.5,
+      "vo": "Voice is the fastest way to type. But in an open office, a cafe, or on a train, speaking out loud just doesn't work." },
+    { "id": "reveal", "min": 9.5,
+      "vo": "Meet Subvocal Radar. A tiny sixty gigahertz radar on a USB-C stick, inspired by The Subvocal Company." },
+    { "id": "sense", "min": 13.0,
+      "vo": "When you silently mouth a word, your jaw and lips still move. The radar measures that motion, down to micrometres, two hundred times a second." },
+    { "id": "hardware", "min": 15.0,
+      "vo": "Inside, an Infineon radar chip with three receivers, a Raspberry Pi RP2040, and a four-layer board just seventeen by forty-six millimetres, designed end to end with my own PCB tools." },
+    { "id": "plug", "min": 11.0,
+      "vo": "Plug it into a laptop or a phone. It shows up as a normal microphone, so it works on Windows, Android and iPhone, with no drivers." },
+    { "id": "demo", "min": 13.0,
+      "vo": "Click any text box, hold a key, and mouth: on my way. It's typed for you. Train your own phrases in seconds." },
+    { "id": "outro", "min": 9.0,
+      "vo": "Ready to order, fully assembled. Find it on GitHub: ajisrawi, slash, subvocal radar." }
+  ]
+}
