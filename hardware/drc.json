@@ -1,43 +1,6 @@
 {
  "ok": true,
- "violations": 4,
- "summary": "unconnected 4",
- "items": [
-  {
-   "kind": "unconnected",
-   "at": {
-    "x": 5.71,
-    "y": 38.575
-   },
-   "layer": "F.Cu",
-   "message": "net VDDRF_R: open connection (4.92,38.50) to (6.50,38.65)"
-  },
-  {
-   "kind": "unconnected",
-   "at": {
-    "x": 9,
-    "y": 37.735
-   },
-   "layer": "F.Cu",
-   "message": "net VDDVCO_R: open connection (9.00,36.82) to (9.00,38.65)"
-  },
-  {
-   "kind": "unconnected",
-   "at": {
-    "x": 8,
-    "y": 37.735
-   },
-   "layer": "F.Cu",
-   "message": "net VDDPLL_R: open connection (8.00,36.82) to (8.00,38.65)"
-  },
-  {
-   "kind": "unconnected",
-   "at": {
-    "x": 5.61,
-    "y": 40.325
-   },
-   "layer": "F.Cu",
-   "message": "net VDDA_R: open connection (4.72,40.50) to (6.50,40.15)"
-  }
- ]
+ "violations": 0,
+ "summary": "none",
+ "items": []
 }

@@ -125,14 +125,15 @@ const fixed = {
   // radar supply caps at their balls (datasheet / Infineon shield practice). Ball map, top view: number-1 column on the left
   // (H1 VDDD y 40.65, J1 VDDA 40.15, L1 VAREF 39.15, M1 VDDRF 38.65), M row along the bottom (M2 OSC x 7.0, M3 VDDLF 7.5,
   // M4 VDDPLL 8.0, M6 VDDVCO 9.0), F9/G9 VDDRF on the right. SPI leaves the left column above y 41.
-  C30: [5.4, 38.5, 0, 'front'],             // VDDRF (M1)
+  // Rotations put each cap's supply pad (pin 1) towards its ball and the GND pad away from the chip.
+  C30: [5.4, 38.5, 180, 'front'],             // VDDRF (M1)
   C31: [11.8, 41.4, 90, 'front'],           // VDDRF (F9/G9)
-  C37: [7.0, 37.3, 90, 'front'],            // VDDLF (M3)
-  C33: [8.0, 37.3, 90, 'front'],            // VDDPLL (M4)
-  C32: [9.0, 37.3, 90, 'front'],            // VDDVCO (M6)
+  C37: [7.0, 37.3, 270, 'front'],            // VDDLF (M3)
+  C33: [8.0, 37.3, 270, 'front'],            // VDDPLL (M4)
+  C32: [9.0, 37.3, 270, 'front'],            // VDDVCO (M6)
   R10: [6.0, 36.5, 90, 'front'],            // 22R series in the 80 MHz clock line to M2
-  C35: [5.2, 39.5, 0, 'front'],             // VAREF (L1), 470 nF
-  C34: [5.2, 40.5, 0, 'front'],             // VDDA (J1), 1 uF
+  C35: [5.2, 39.5, 180, 'front'],             // VAREF (L1), 470 nF
+  C34: [5.2, 40.5, 180, 'front'],             // VDDA (J1), 1 uF
   C36: [3.6, 40.0, 90, 'front'],            // VDDD (H1)
   C38: [9.4, 32.2, 90, 'front'],            // 80 MHz oscillator supply
   // test pads (bare copper) on the bottom
